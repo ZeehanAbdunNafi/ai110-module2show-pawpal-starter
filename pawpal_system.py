@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -44,6 +44,26 @@ class Task:
             f"Task: {self.description}, duration: {self.duration_minutes} min, "
             f"frequency: {self.frequency}, status: {status}, scheduled: {schedule}"
         )
+
+    def create_next_occurrence(self) -> Optional["Task"]:
+        """Create next occurrence for recurring tasks."""
+        if self.frequency == "daily" and self.scheduled_time:
+            next_time = self.scheduled_time + timedelta(days=1)
+            return Task(
+                description=self.description,
+                duration_minutes=self.duration_minutes,
+                frequency=self.frequency,
+                scheduled_time=next_time,
+            )
+        elif self.frequency == "weekly" and self.scheduled_time:
+            next_time = self.scheduled_time + timedelta(days=7)
+            return Task(
+                description=self.description,
+                duration_minutes=self.duration_minutes,
+                frequency=self.frequency,
+                scheduled_time=next_time,
+            )
+        return None
 
 
 @dataclass
@@ -122,16 +142,32 @@ class Scheduler:
         """Return all completed tasks."""
         return [t for t in self.get_all_tasks() if t.completed]
 
-    def sort_tasks_by_time(self) -> List[Task]:
+    def sort_tasks_by_duration(self) -> List[Task]:
         """Return all tasks sorted by duration in ascending order."""
         return sorted(self.get_all_tasks(), key=lambda t: t.duration_minutes)
+
+    def sort_tasks_by_scheduled_time(self) -> List[Task]:
+        """Return all tasks sorted by scheduled_time (earliest first, unscheduled last)."""
+        return sorted(
+            self.get_all_tasks(),
+            key=lambda t: t.scheduled_time if t.scheduled_time else datetime.max
+        )
+
+    def filter_tasks_by_status(self, completed: bool) -> List[Task]:
+        """Return tasks filtered by completion status."""
+        return [t for t in self.get_all_tasks() if t.completed == completed]
+
+    def filter_tasks_by_pet(self, pet_name: str) -> List[Task]:
+        """Return tasks for a specific pet by name."""
+        pet = self.owner.get_pet(pet_name)
+        return pet.get_tasks() if pet else []
 
     def generate_schedule(
         self,
         start_time: Optional[datetime] = None,
         break_minutes: int = 10,
         max_daily_minutes: int = 8 * 60,
-    ) -> List[Task]:
+    ) -> Tuple[List[Task], List[str]]:
         """Generate a daily schedule of pending tasks sorted by frequency and duration, with breaks between tasks."""
         if start_time is None:
             start_time = datetime.now().replace(hour=8, minute=0, second=0, microsecond=0)
@@ -160,4 +196,51 @@ class Scheduler:
             allocated_minutes += task.duration_minutes
             current_time += timedelta(minutes=task.duration_minutes + break_minutes)
 
-        return schedule
+        # Detect conflicts: group by scheduled_time
+        time_groups = {}
+        for task in schedule:
+            if task.scheduled_time:
+                key = task.scheduled_time
+                if key not in time_groups:
+                    time_groups[key] = []
+                time_groups[key].append(task)
+
+        conflicts = []
+        for time_key, tasks_at_time in time_groups.items():
+            if len(tasks_at_time) > 1:
+                task_names = [t.description for t in tasks_at_time]
+                conflicts.append(f"Conflict at {time_key.strftime('%H:%M')}: {', '.join(task_names)}")
+
+        return schedule, conflicts
+
+
+    def check_conflicts(self) -> List[str]:
+        """Check for conflicts in currently scheduled tasks."""
+        time_groups = {}
+        for task in self.get_all_tasks():
+            if task.scheduled_time and not task.completed:
+                key = task.scheduled_time
+                if key not in time_groups:
+                    time_groups[key] = []
+                time_groups[key].append(task)
+
+        conflicts = []
+        for time_key, tasks_at_time in time_groups.items():
+            if len(tasks_at_time) > 1:
+                task_names = [t.description for t in tasks_at_time]
+                conflicts.append(f"Conflict at {time_key.strftime('%H:%M')}: {', '.join(task_names)}")
+
+        return conflicts
+
+
+    def mark_task_complete(self, task: Task) -> None:
+        """Mark a task complete and handle recurring tasks."""
+        task.mark_complete()
+        if task.frequency in ["daily", "weekly"]:
+            next_task = task.create_next_occurrence()
+            if next_task:
+                # Find the pet and add the next task
+                for pet in self.owner.pets.values():
+                    if task in pet.tasks:
+                        pet.add_task(next_task)
+                        break

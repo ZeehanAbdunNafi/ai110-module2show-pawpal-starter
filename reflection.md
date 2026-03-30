@@ -45,7 +45,7 @@ Priority was the most important factor, followed by time constraints. High-prior
 
 **b. Tradeoffs**
 
-One tradeoff is that tasks outside preferred categories may be skipped even if time is available. This simplifies decision-making but may ignore some valid tasks. This is reasonable because the goal is to respect user preferences while still prioritizing important tasks.
+One tradeoff in my scheduler is that it only detects conflicts when tasks have the exact same scheduled start time, rather than checking for overlapping time durations. This simplifies the implementation and keeps the logic easy to understand, but it means some real-world overlaps may not be detected. I chose this approach to prioritize clarity and maintainability for this project.
 
 ---
 
