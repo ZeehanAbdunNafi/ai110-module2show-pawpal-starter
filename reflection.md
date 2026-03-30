@@ -4,13 +4,25 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+The system supports three core user actions:
+
+1. The user can enter basic information about themselves and their pet, such as name and species, to personalize the planning system.
+
+2. The user can add and manage pet care tasks, including details like task type, duration, and priority.
+
+3. The user can generate a daily schedule that organizes tasks based on constraints such as time availability and priority, and the system explains why tasks were selected and ordered.
+
+Based on these actions, I designed the system using the following classes:
+
+- Owner: stores user information and preferences
+- Pet: stores pet details
+- PetCareTask: represents individual care tasks
+- Scheduler: generates the daily plan using constraints and priorities
+- DayPlan: stores the final schedule and explanation
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+The design changed during implementation. Initially, I planned to use a simple Task class, but I changed it to PetCareTask with more structured attributes like category and priority using enums. I also introduced OwnerPreferences as a separate class to better organize scheduling constraints. This made the system more modular and easier to manage.
 
 ---
 
@@ -18,13 +30,19 @@
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers several constraints:
+
+- Available time (earliest start and latest end)
+- Task priority (low, medium, high)
+- Maximum number of tasks
+- Preferred and avoided task categories
+- Task duration
+
+Priority was the most important factor, followed by time constraints. High-priority tasks are scheduled first, and tasks must fit within the available time window.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+One tradeoff is that tasks outside preferred categories may be skipped even if time is available. This simplifies decision-making but may ignore some valid tasks. This is reasonable because the goal is to respect user preferences while still prioritizing important tasks.
 
 ---
 
@@ -32,13 +50,11 @@
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used AI to help brainstorm the system design, generate UML diagrams, and guide the implementation of scheduling logic. I also used it to refine class structures and debug issues.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+At one point, AI suggested adding more complex relationships and extra classes. I chose not to include them because they were unnecessary for this project. I verified decisions by comparing them with the project requirements and ensuring the system remained simple and functional.
 
 ---
 
@@ -46,13 +62,18 @@
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+I tested the following behaviors:
+
+- Tasks being sorted by priority
+- Tasks being scheduled within time constraints
+- Tasks being skipped when constraints are not met
+- Explanation messages being generated correctly
+
+These tests were important to ensure the scheduler works logically and produces meaningful output.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+I am confident that the scheduler works correctly for normal cases. If I had more time, I would test edge cases such as overlapping constraints, very tight schedules, and large numbers of tasks.
 
 ---
 
@@ -60,12 +81,12 @@
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+The scheduling logic and explanation system worked well. The system successfully generates a clear and understandable daily plan.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+I would improve the UI and make the scheduler more flexible, such as allowing partial scheduling instead of skipping tasks entirely.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+One important takeaway is that designing a system before coding makes implementation much easier. Breaking the problem into classes helped create a clean and organized solution.
