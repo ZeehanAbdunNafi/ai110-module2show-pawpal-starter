@@ -67,16 +67,20 @@ At one point, AI suggested adding more complex relationships and extra classes. 
 
 I tested the following behaviors:
 
-- Tasks being sorted by priority
-- Tasks being scheduled within time constraints
-- Tasks being skipped when constraints are not met
-- Explanation messages being generated correctly
+- Sorting tasks by scheduled time
+- Filtering tasks by status (completed vs pending)
+- Filtering tasks by pet
+- Recurring task creation when marking daily tasks complete
+- Conflict detection when tasks share the same scheduled time
+- Edge cases such as:
+  - pet with no tasks
+  - non-existent pet
 
 These tests were important to ensure the scheduler works logically and produces meaningful output.
 
 **b. Confidence**
 
-I am confident that the scheduler works correctly for normal cases. If I had more time, I would test edge cases such as overlapping constraints, very tight schedules, and large numbers of tasks.
+I used automated pytest tests, and all tests passed successfully. The system is reliable for core scenarios, and edge cases were considered and validated.
 
 ---
 
