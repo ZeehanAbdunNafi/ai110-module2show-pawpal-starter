@@ -14,11 +14,14 @@ The system supports three core user actions:
 
 Based on these actions, I designed the system using the following classes:
 
-- Owner: stores user information and preferences
-- Pet: stores pet details
-- PetCareTask: represents individual care tasks
-- Scheduler: generates the daily plan using constraints and priorities
-- DayPlan: stores the final schedule and explanation
+- Owner: stores user information and preferences; can set available time and view the daily plan
+- OwnerPreferences: captures scheduling constraints (earliest start, latest end, max tasks, category preferences)
+- Pet: stores pet details and associated tasks; supports task linking and detail updates
+- PetCareTask: represents individual care tasks with duration, priority, status, type, and recurring flag
+- Scheduler: sorts/filter tasks, generates a daily schedule, and records explanations
+- DayPlan: stores scheduled entries, total planned time, and explanation notes
+
+I also asked Copilot to review my skeleton in `#file:pawpal_system.py` and requested feedback on missing relationships or potential logic bottlenecks. Copilot confirmed the core associations are right (Owner->Pet, Pet->Task, Scheduler->Task->DayPlan) and suggested ensuring tasks can reference their related pet or owner if needed in future extensions.
 
 **b. Design changes**
 
