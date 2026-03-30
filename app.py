@@ -105,20 +105,53 @@ if st.session_state.owner.pets:
         else:
             st.error("Please enter a task description.")
 
-    # Display all tasks by pet
-    st.write("**Current tasks:**")
-    for pet_name, pet in st.session_state.owner.pets.items():
-        if pet.tasks:
-            st.write(f"  **{pet_name}:**")
-            for task in pet.tasks:
-                status = "✓" if task.completed else "○"
-                st.write(
-                    f"    {status} {task.description} ({task.duration_minutes} min, {task.frequency})"
-                )
-        else:
-            st.write(f"  **{pet_name}:** No tasks yet")
+    # Display all tasks sorted by scheduled time
+    all_tasks = st.session_state.scheduler.sort_tasks_by_scheduled_time()
+    if all_tasks:
+        st.write("**All Tasks (Sorted by Scheduled Time):**")
+        pending_tasks = [t for t in all_tasks if not t.completed]
+        completed_tasks = [t for t in all_tasks if t.completed]
+
+        if pending_tasks:
+            st.markdown("**Pending Tasks:**")
+            task_data = []
+            for task in pending_tasks:
+                time_str = task.scheduled_time.strftime("%Y-%m-%d %H:%M") if task.scheduled_time else "Unscheduled"
+                task_data.append({
+                    "Description": task.description,
+                    "Duration (min)": task.duration_minutes,
+                    "Frequency": task.frequency,
+                    "Scheduled": time_str
+                })
+            st.table(task_data)
+
+        if completed_tasks:
+            st.markdown("**Completed Tasks:**")
+            task_data = []
+            for task in completed_tasks:
+                time_str = task.scheduled_time.strftime("%Y-%m-%d %H:%M") if task.scheduled_time else "Unscheduled"
+                task_data.append({
+                    "Description": task.description,
+                    "Duration (min)": task.duration_minutes,
+                    "Frequency": task.frequency,
+                    "Scheduled": time_str
+                })
+            st.table(task_data)
+    else:
+        st.info("No tasks yet.")
 else:
     st.info("Add a pet first to create tasks.")
+
+st.divider()
+
+# Conflict check
+conflicts = st.session_state.scheduler.check_conflicts()
+if conflicts:
+    st.warning("⚠️ Current Scheduling Conflicts:")
+    for conflict in conflicts:
+        st.write(f"- {conflict}")
+else:
+    st.info("No scheduling conflicts detected.")
 
 st.divider()
 

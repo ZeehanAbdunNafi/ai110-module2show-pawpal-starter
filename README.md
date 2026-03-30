@@ -53,3 +53,20 @@ python -m pytest
 The tests cover core behaviors including task completion, adding tasks to pets, sorting tasks by scheduled time, handling recurring tasks, detecting scheduling conflicts, and filtering tasks by status or pet.
 
 Confidence level: ⭐⭐⭐⭐ (4/5 stars) - Covers main features well, but could be expanded for more edge cases.
+
+## Features
+
+PawPal+ includes the following key features:
+
+- Sorting tasks by scheduled time for organized viewing
+- Filtering tasks by status (completed vs pending)
+- Filtering tasks by pet for personalized management
+- Conflict detection with warning messages when tasks overlap
+- Recurring tasks (daily/weekly auto-creation) for consistent care
+- Streamlit UI integration for an easy-to-use web app
+
+## 📸 Demo
+
+<a href="/course_images/ai110/pawpal_ui.png" target="_blank">
+  <img src='/course_images/ai110/pawpal_ui.png' title='PawPal App' alt='PawPal App' class='center-block' />
+</a>

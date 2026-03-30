@@ -53,11 +53,11 @@ One tradeoff in my scheduler is that it only detects conflicts when tasks have t
 
 **a. How you used AI**
 
-I used AI to help brainstorm the system design, generate UML diagrams, and guide the implementation of scheduling logic. I also used it to refine class structures and debug issues.
+I used AI to help brainstorm the system design, generate UML diagrams, and guide the implementation of scheduling logic. I also used it to refine class structures and debug issues. The most effective Copilot features were Chat for step-by-step guidance and Agent Mode for complex tasks like building test suites. Separate chat sessions helped organize development by keeping each phase focused.
 
 **b. Judgment and verification**
 
-At one point, AI suggested adding more complex relationships and extra classes. I chose not to include them because they were unnecessary for this project. I verified decisions by comparing them with the project requirements and ensuring the system remained simple and functional.
+At one point, AI suggested adding more complex relationships and extra classes. I chose not to include them because they were unnecessary for this project. I verified decisions by comparing them with the project requirements and ensuring the system remained simple and functional. As the lead architect, I learned to evaluate AI suggestions critically, modify them to fit my vision, and maintain overall project direction while leveraging AI for efficiency.
 
 ---
 
